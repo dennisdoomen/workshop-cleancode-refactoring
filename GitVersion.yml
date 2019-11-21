@@ -1,0 +1,6 @@
+branches:
+  release:
+    regex: releases?[/-]
+    tag: rc
+ignore:
+  sha: []
