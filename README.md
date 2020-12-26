@@ -1,15 +1,6 @@
-[![](https://ci.appveyor.com/api/projects/status/h60mq3e5uf5tuout/branch/master?svg=true)](https://ci.appveyor.com/project/dennisdoomen/fluentassertions/branch/master) 
-[![](https://img.shields.io/github/release/FluentAssertions/FluentAssertions.svg?label=latest%20release)](https://github.com/FluentAssertions/FluentAssertions/releases/latest)
-[![](https://img.shields.io/nuget/dt/FluentAssertions.svg?label=nuget%20downloads)](https://www.nuget.org/packages/FluentAssertions)
-[![](https://img.shields.io/librariesio/dependents/nuget/FluentAssertions.svg?label=dependent%20libraries)](https://libraries.io/nuget/FluentAssertions)
-![](https://img.shields.io/badge/release%20strategy-githubflow-orange.svg)
+# Prerequisites
+* Visual Studio 2019 (16.8 or later), [Jetbrains Rider](https://www.jetbrains.com/rider/) (2020.3 or later) or Visual Studio Code with the [C# Extension](https://code.visualstudio.com/docs/languages/dotnet).
+* .NET 5.0.101 SDK or later (can be downloaded [here](https://dotnet.microsoft.com/download/dotnet/5.0))
 
-# What is this and why do I need this?
-See https://www.fluentassertions.com for background information, usage documentation, an extensibility guide, support information and more tips & tricks.
-
-# How do I build this?
-Install Visual Studio 2019 or JetBrains Rider 2017.1 and Build Tools 2017 and run
-
-`build.ps1`
-
-
+# Instructions
+* Refactor the `EquivalencyValidator`
