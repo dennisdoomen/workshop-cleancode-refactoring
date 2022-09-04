@@ -60,8 +60,11 @@ namespace FluentAssertions.Equivalency
                 AssertionScope.Current.TrackComparands(context.Subject, context.Expectation);
 
                 var objectTracker = AssertionScope.Current.Get<CyclicReferenceDetector>("cyclic_reference_detector");
-                objectTracker = new CyclicReferenceDetector(config.CyclicReferenceHandling);
-                AssertionScope.Current.AddNonReportable("cyclic_reference_detector", objectTracker);
+                if (objectTracker is null)
+                {
+                    objectTracker = new CyclicReferenceDetector(config.CyclicReferenceHandling);
+                    AssertionScope.Current.AddNonReportable("cyclic_reference_detector", objectTracker);
+                }
 
                 bool result;
                 if (context.Expectation is null)
