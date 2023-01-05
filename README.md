@@ -1,3 +1,3 @@
 # Prerequisites
-* Visual Studio 2019 (16.8 or later), [Jetbrains Rider](https://www.jetbrains.com/rider/) (2020.3 or later) or Visual Studio Code with the [C# Extension](https://code.visualstudio.com/docs/languages/dotnet).
-* .NET 5.0.101 SDK or later (can be downloaded [here](https://dotnet.microsoft.com/download/dotnet/5.0))
+* Visual Studio 2022, [Jetbrains Rider](https://www.jetbrains.com/rider/) (2022.1.3 or later) or Visual Studio Code with the [C# Extension](https://code.visualstudio.com/docs/languages/dotnet).
+* .NET 6.0.100 SDK or later (can be downloaded [here](https://dotnet.microsoft.com/download/dotnet/6.0))
