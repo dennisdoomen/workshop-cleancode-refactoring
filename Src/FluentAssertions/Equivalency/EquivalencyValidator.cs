@@ -44,65 +44,60 @@ namespace FluentAssertions.Equivalency
         public void AssertEqualityUsing(IEquivalencyValidationContext context)
         {
             var depth = context.SelectedMemberPath.Count(chr => chr == '.');
-            var shouldRecurse = config.AllowInfiniteRecursion || depth < 10;
 
-            if (!shouldRecurse)
+            if (!config.AllowInfiniteRecursion && depth >= 10)
             {
                 AssertionScope.Current.FailWith("The maximum recursion depth was reached.  ");
+                return;
+            }
+
+            if (context.SelectedMemberDescription.Length > 0)
+            {
+                AssertionScope.Current.Context = context.SelectedMemberDescription;
+            }
+
+            AssertionScope.Current.TrackComparands(context.Subject, context.Expectation);
+
+            var objectTracker = AssertionScope.Current.Get<CyclicReferenceDetector>("cyclic_reference_detector");
+            if (objectTracker is null)
+            {
+                objectTracker = new CyclicReferenceDetector(config.CyclicReferenceHandling);
+                AssertionScope.Current.AddNonReportable("cyclic_reference_detector", objectTracker);
+            }
+
+            bool hasValueTypeSemantics;
+            if (context.Expectation is null)
+            {
+                hasValueTypeSemantics = false;
             }
             else
             {
-                if (context.SelectedMemberDescription.Length > 0)
+                var type = context.Expectation.GetType();
+
+                if (!isComplexTypeMap.TryGetValue(type, out hasValueTypeSemantics))
                 {
-                    AssertionScope.Current.Context = context.SelectedMemberDescription;
+                    hasValueTypeSemantics = !type.OverridesEquals();
+                    isComplexTypeMap[type] = hasValueTypeSemantics;
                 }
+            }
 
-                AssertionScope.Current.TrackComparands(context.Subject, context.Expectation);
+            var reference = new ObjectReference(context.Expectation, context.SelectedMemberPath, hasValueTypeSemantics);
+            if (!objectTracker.IsCyclicReference(reference, context.Because, context.BecauseArgs))
+            {
+                var wasHandled = false;
 
-                var objectTracker = AssertionScope.Current.Get<CyclicReferenceDetector>("cyclic_reference_detector");
-                if (objectTracker is null)
+                foreach (IEquivalencyStep step in AssertionOptions.EquivalencySteps)
                 {
-                    objectTracker = new CyclicReferenceDetector(config.CyclicReferenceHandling);
-                    AssertionScope.Current.AddNonReportable("cyclic_reference_detector", objectTracker);
-                }
-
-                bool result;
-                if (context.Expectation is null)
-                {
-                    result = false;
-                }
-                else
-                {
-                    var type = context.Expectation.GetType();
-
-                    if (!isComplexTypeMap.TryGetValue(type, out result))
+                    if (step.CanHandle(context, config) && step.Handle(context, this, config))
                     {
-                        result = !type.OverridesEquals();
-                        isComplexTypeMap[type] = result;
+                        wasHandled = true;
+                        return;
                     }
                 }
 
-                var reference = new ObjectReference(context.Expectation, context.SelectedMemberPath, result);
-                if (!objectTracker.IsCyclicReference(reference, context.Because, context.BecauseArgs))
+                if (!wasHandled)
                 {
-                    var wasHandled = false;
-
-                    foreach (IEquivalencyStep step in AssertionOptions.EquivalencySteps)
-                    {
-                        if (step.CanHandle(context, config))
-                        {
-                            if (step.Handle(context, this, config))
-                            {
-                                wasHandled = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!wasHandled)
-                    {
-                        Execute.Assertion.FailWith("No IEquivalencyStep was found to handle the context. ");
-                    }
+                    Execute.Assertion.FailWith("No IEquivalencyStep was found to handle the context. ");
                 }
             }
         }
