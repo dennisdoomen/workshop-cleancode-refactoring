@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions.Common;
 using FluentAssertions.Execution;
+using ITimer = FluentAssertions.Common.ITimer;
 
 namespace FluentAssertions.Specialized
 {
